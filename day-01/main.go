@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	file, err := os.Open("./test.txt")
+	file, err := os.Open("./input.txt")
 	defer file.Close()
 
 	if err != nil {
@@ -20,14 +20,16 @@ func main() {
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
 
+	var sum int
+
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
-		fmt.Println(line)
+		//fmt.Println(line)
 
 		var first *int
-		first = nil
 		var last *int
 		last = nil
+		first = nil
 
 		for _, r := range line {
 			if unicode.IsDigit(r) {
@@ -36,18 +38,21 @@ func main() {
 					if err != nil {
 						log.Println(err)
 					}
-					i = i * 10
 					first = &i
-					fmt.Println(*first)
 				} else {
 					i, err := strconv.Atoi(string(r))
 					if err != nil {
 						log.Println(err)
 					}
 					last = &i
-					fmt.Printf("last %d\n", *last)
 				}
 			}
 		}
+		if last == nil {
+			last = first
+		}
+		sum += (*first * 10) + *last
 	}
+
+	fmt.Printf("RESULT IS: %d\n", sum)
 }
