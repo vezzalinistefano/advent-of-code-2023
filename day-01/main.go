@@ -6,10 +6,13 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 	"unicode"
 )
 
 func main() {
+	start := time.Now()
+
 	file, err := os.Open("./input.txt")
 	defer file.Close()
 
@@ -24,7 +27,6 @@ func main() {
 
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
-		//fmt.Println(line)
 
 		var first *int
 		var last *int
@@ -55,4 +57,6 @@ func main() {
 	}
 
 	fmt.Printf("RESULT IS: %d\n", sum)
+	elapsed := time.Since(start)
+	fmt.Printf("Execution time: %s", elapsed)
 }
