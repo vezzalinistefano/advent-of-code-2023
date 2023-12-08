@@ -25,10 +25,29 @@ var numbers = map[string]int{
 	"nine":  9,
 }
 
+func extractNumber(s string) int {
+	i := 0
+	var ok bool
+	value, ok := numbers[s]
+
+	for ok == false {
+		i = i + 1
+		subs := s[:len(s)-i]
+
+		// 3 is the least amount of characters
+		if len(subs) < len("one") {
+			break
+		}
+
+		value, ok = numbers[subs]
+	}
+	return value
+}
+
 func main() {
 	start := time.Now()
 
-	file, err := os.Open("./test.txt")
+	file, err := os.Open("./input.txt")
 	defer file.Close()
 
 	if err != nil {
@@ -49,7 +68,6 @@ func main() {
 		first = nil
 
 		for index, r := range line {
-			fmt.Println(index)
 			if unicode.IsDigit(r) {
 				if first == nil {
 					i, err := strconv.Atoi(string(r))
@@ -67,13 +85,20 @@ func main() {
 					last = &i
 				}
 			} else if strings.Contains(numberFirstLetters, string(r)) {
-                fmt.Println(index)
-				if (index + 4) > (len(line) - 1) {
-					fmt.Println(line[index:])
+				var i int
+				if (index + 5) > (len(line) - 1) {
+					i = extractNumber(line[index:])
 				} else {
-					fmt.Println(line[index : index+4])
+					i = extractNumber(line[index : index+5])
 				}
 
+				if i > 0 {
+					if first == nil {
+						first = &i
+					} else {
+						last = &i
+					}
+				}
 			}
 		}
 		if last == nil {
