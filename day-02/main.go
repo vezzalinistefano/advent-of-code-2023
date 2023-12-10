@@ -16,15 +16,15 @@ const (
 	BLUE  = "blue"
 )
 
-var maxColorAmount = map[string]int{
-	"red":   12,
-	"green": 13,
-	"blue":  14,
-}
-
 var finalResult int
 
-func parseRound(rounds []string, game int) bool {
+func parseRound(rounds []string, game int) int {
+	var extractionMap = map[string]int{
+		"red":   0,
+		"green": 0,
+		"blue":  0,
+	}
+
 	for i, round := range rounds {
 		if i > 0 {
 			round = round[1:]
@@ -32,7 +32,6 @@ func parseRound(rounds []string, game int) bool {
 		fmt.Printf("[%d]: '%s'\n", i, round)
 
 		extractions := strings.Split(round, ",")
-		var extractionMap = make(map[string]int)
 
 		for j, extraction := range extractions {
 			if j > 0 {
@@ -49,18 +48,18 @@ func parseRound(rounds []string, game int) bool {
 				log.Fatal(err)
 			}
 
-			extractionMap[colour] = amount
-		}
-		if extractionMap[RED] <= maxColorAmount[RED] &&
-			extractionMap[GREEN] <= maxColorAmount[GREEN] &&
-			extractionMap[BLUE] <= maxColorAmount[BLUE] {
-			fmt.Println("\tExtraction is OK")
-		} else {
-			fmt.Println("\tExtraction is NOT OK")
-			return false
+            if amount > extractionMap[colour] {
+                extractionMap[colour] = amount
+            }
 		}
 	}
-	return true
+
+    power := 1
+    fmt.Println(extractionMap)
+    for _, value := range extractionMap {
+        power *= value
+    }
+    return power
 }
 
 func main() {
@@ -93,14 +92,14 @@ func main() {
 			log.Fatal(err)
 		}
 		fmt.Printf("##########\nGame number: %d\n##########\n", game)
-        if game == 100 {
-            fmt.Println()
-        }
+		if game == 100 {
+			fmt.Println()
+		}
 
 		rounds := strings.Split(gameResultsString, ";")
-		if parseRound(rounds, game) {
-			finalResult += game
-		}
+
+        power := parseRound(rounds, game)
+        finalResult += power 
 	}
 
 	fmt.Printf("FINAL RESULT: %d\n", finalResult)
